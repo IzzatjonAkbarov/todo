@@ -2,37 +2,77 @@ import React, { useState } from "react";
 import TodoItem from "./todoitem";
 
 const Todo = () => {
+  const gettingDate = () => {
+    let date = new Date();
+
+    let hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+    let minutes =
+      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+    let alldate = `${hours}:${minutes}`;
+    return alldate;
+  };
   const [list, setList] = useState("");
+  const [search, setsearch] = useState("");
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
 
   const [EditID, setEditID] = useState(null);
   const [Editvalue, setEditvalue] = useState(list);
-
+  let datastorage = JSON.parse(localStorage.getItem("data")) || [];
+  let searchdatastorage =
+    JSON.parse(localStorage.getItem("searchdatastorage")) || [];
   const addTodo = (e) => {
     e.preventDefault();
     if (list.trim() === "") {
       setError("Task cannot be empty!");
       return;
     }
-    setData((prevData) => [...prevData, { list, id: Date.now() }]);
+    localStorage.setItem(
+      "data",
+      JSON.stringify([
+        ...datastorage,
+        { list, id: Date.now(), date: gettingDate() },
+      ])
+    );
+    setData((prevData) => [
+      ...prevData,
+      { list, id: Date.now(), date: gettingDate() },
+    ]);
     setList("");
     setError("");
   };
+  const [searchResults, setSearchResults] = useState([]);
 
+  const searchtodo = (e) => {
+    e.preventDefault();
+    let searchdata = datastorage.filter((value) =>
+      value.list.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (searchdata.length === 0) {
+      setError("Task not found!");
+    } else {
+      setError("");
+    }
+
+    setSearchResults(searchdata); // Store results in state, not localStorage
+  };
   const deleteList = (id) => {
-    let newData = data.filter((value) => value.id !== id);
+    let newData = datastorage.filter((value) => value.id !== id);
     setData(newData);
+    localStorage.setItem("data", JSON.stringify(newData));
   };
 
   const edit = (id, Editvalue) => {
-    data.filter((value) => {
+    datastorage.filter((value) => {
       if (value.id === id) {
-        let newdata = data.map((value) =>
-          value.id === id ? { ...value, list: Editvalue } : value
+        let newdata = datastorage.map((value) =>
+          value.id === id
+            ? { ...value, list: Editvalue, date: `edited ${gettingDate()}` }
+            : value
         );
         setData(newdata);
-
+        localStorage.setItem("data", JSON.stringify(newdata));
         setEditID(value.id);
       }
     });
@@ -43,6 +83,22 @@ const Todo = () => {
       <h1 className="text-center text-3xl font-bold text-teal-800 mb-6">
         Todo List with n17
       </h1>
+      <form
+        onSubmit={searchtodo}
+        className="w-full flex items-center gap-2 mb-3">
+        <input
+          onChange={(e) => setsearch(e.target.value)}
+          name="search"
+          type="text"
+          className="flex-1 h-[45px] px-4 rounded-lg border-2 border-teal-200 focus:border-teal-500 focus:outline-none transition-all"
+          placeholder="search your task..."
+        />
+        <button
+          type="submit"
+          className="h-[45px] w-[100px] bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-all">
+          search
+        </button>
+      </form>
       <form onSubmit={addTodo} className="w-full flex items-center gap-2 mb-3">
         <input
           value={list}
@@ -65,17 +121,19 @@ const Todo = () => {
       </form>
       {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
       <div className="space-y-3">
-        {data.map((value) => (
+        {(search ? searchResults : datastorage).map((value) => (
           <TodoItem
             key={value.id}
             {...value}
+            date={value.date}
             deleteList={deleteList}
-            data={data}
+            datastorage={datastorage}
             setEditID={setEditID}
             setEditvalue={setEditvalue}
             EditID={EditID}
             Editvalue={Editvalue}
             edit={edit}
+            gettingDate={gettingDate}
           />
         ))}
       </div>
