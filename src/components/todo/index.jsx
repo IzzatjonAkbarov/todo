@@ -55,7 +55,7 @@ const Todo = () => {
       setError("");
     }
 
-    setSearchResults(searchdata); // Store results in state, not localStorage
+    setSearchResults(searchdata);
   };
   const deleteList = (id) => {
     let newData = datastorage.filter((value) => value.id !== id);
@@ -81,7 +81,7 @@ const Todo = () => {
   return (
     <div className="w-[50%] m-auto mt-10 p-6 bg-gradient-to-r from-green-50 to-teal-50 rounded-xl shadow-lg">
       <h1 className="text-center text-3xl font-bold text-teal-800 mb-6">
-        Todo List with n17
+        Todo List by Izzatillo
       </h1>
       <form
         onSubmit={searchtodo}
