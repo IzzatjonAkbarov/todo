@@ -89,7 +89,7 @@ const Todo = () => {
   const progress = () => {
     if (datastorage.length == 0) return 0;
     const completedtask = datastorage.filter((task) => task.completed).length;
-    return Math.round(completedtask / datastorage.length) * 100;
+    return Math.round((completedtask / datastorage.length) * 100);
   };
   return (
     <div className="w-[50%] m-auto mt-10 p-6 bg-gradient-to-r from-green-50 to-teal-50 rounded-xl shadow-lg">
