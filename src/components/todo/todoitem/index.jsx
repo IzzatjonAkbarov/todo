@@ -1,39 +1,41 @@
-import { use } from "react";
 import { useState } from "react";
 
 const TodoItem = ({
   list,
   id,
+  idofthecheck,
   deleteList,
   setEditID,
   EditID,
   edit,
   date,
-
-  setcount,
-  count,
+  completed,
+  addcheck,
 }) => {
   let [Editvalue, setEditvalue] = useState(list);
-  const [check, setCheck] = useState(false);
+
   return (
     <div className="flex  items-center relative justify-between p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
       <input
-        onChange={() => (setcount(), setCheck(!check))}
-        className="w-[50px]"
+        className="w-[50px] "
+        onChange={() => addcheck(idofthecheck)}
+        checked={completed}
         id="check"
         type="checkbox"
       />
-      <span className="text-gray-700 w-full">
+      <span
+        className={
+          completed
+            ? "text-gray-700 w-full line-through"
+            : "text-gray-700 w-full "
+        }>
         {EditID == id ? (
           <input
-            style={{ textDecoration: check ? "line-through" : "none" }}
             className="border-2 border-gray-300 rounded-lg p-1 w-full focus:outline-none"
             value={Editvalue}
             onChange={(e) => setEditvalue(e.target.value)}
             type="text"
           />
-        ) : check ? (
-          <del>{list}</del>
         ) : (
           list
         )}
@@ -42,13 +44,6 @@ const TodoItem = ({
       <div className="flex gap-2">
         <button
           onClick={() => {
-            if (count < 0) {
-              count = 0;
-            } else {
-              count--;
-
-              localStorage.setItem("countOfTheTask", count);
-            }
             deleteList(id);
           }}
           className="text-red-400 hover:text-red-600 transition-colors">
