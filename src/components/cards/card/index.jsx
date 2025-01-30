@@ -36,7 +36,7 @@ const ProductCard = ({
             {title}
           </h2>
           <p className="text-sm text-gray-600 multi-line ">{description}</p>
-          <div className="flex items-center space-x-2 flex items-center justify-between">
+          <div className="flex items-center space-x-2  justify-between">
             <span className="text-xl font-bold text-gray-900">{price}</span>
             <div className=" text-yellow-500 flex items-center ">
               <div className="ml-1 text-sm font-medium">{rate}</div>
